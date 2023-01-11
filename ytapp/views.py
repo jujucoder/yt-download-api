@@ -16,28 +16,15 @@ class VideoDownload(GenericAPIView):
 
     def post(self, request, *args, **kwargs):
      link=self.request.data['youtube_link']
-     res=self.request.data['resolution']
-     res=res
      try:
         yt =pytube.YouTube(link)
      except:
         return Response({'link invalid or not found'}, status=status.HTTP_404_NOT_FOUND)  
 
 
-     video_stream=yt.streams.filter(only_video=True,subtype='mp4',resolution=res).first()
-     audio_stream=yt.streams.filter(only_audio=True).first()
-     video_name=yt.title 
-     print(video_stream)
-     print(audio_stream)
+     video_stream=yt.streams.filter(only_video=True,subtype='mp4').first()
      if video_stream is not None:
-      #   video_stream.download()
-        audio_stream=audio_stream.download()
-        os.rename(audio_stream, 'wahala.mp4')
+        video_stream.download()
+        os.rename(video_stream, 'wahala.mp4')
         return Response({'thanks for downloading'},status=status.HTTP_200_OK)
      return Response({'this resoluton is unavailable for this video'},status=status.HTTP_404_NOT_FOUND)    
-
-
-
-@api_view(['GET'])
-def api_root(request):
-    return Response()
